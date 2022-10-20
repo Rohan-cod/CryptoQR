@@ -14,12 +14,21 @@ enum CodeType {
     case segwit
     case taproot
     
-    var description : String {
+    var description: String {
         switch self {
         case .legacy: return "Legacy Adresses (P2PKH)"
         case .p2sh: return "Pay to Script Hash (P2SH)"
         case .segwit: return "Native SegWit (P2WPKH)"
         case .taproot: return "Taproot (P2TR)"
+        }
+    }
+
+    var prefix: String {
+        switch self {
+        case .legacy: return "1"
+        case .p2sh: return "3"
+        case .segwit: return "bc1q"
+        case .taproot: return "bc1p"
         }
     }
 }
@@ -29,6 +38,7 @@ class ScannerViewModel: ObservableObject {
     @Published var scannedCode: String?
     @Published var isValid: Bool?
     @Published var codeType: CodeType?
+    private let addressRegex: String = "^([13]|bc1q|bc1p)[a-zA-Z0-9]{27,34}$"
 
     // UI Model for the home screen
     @Published var homeUIModel: HomeUIModel = HomeUIModel(
@@ -37,39 +47,44 @@ class ScannerViewModel: ObservableObject {
         scanButtonLabel: "Scan a QR Code", scanButtonForegroundColor: .blue,
         scanButtonBackgroundColor: .gray.opacity(0.5), isValid: false, cornerRadius: 8)
     
-    
     // Function to Validate BTC Address
-    private func validateCode(_ code: String) {
-        if code.matches("^([13]|bc1q|bc1p)[a-zA-Z0-9]{27,34}$") {
+    func validateCode(_ code: String) -> Bool {
+        if code.matches(addressRegex) {
             isValid = true
         } else {
             isValid = false
         }
-        homeUIModel.isValid = isValid!
-    }
 
+        homeUIModel.isValid = isValid!
+
+        return isValid!
+    }
+    
     // Function to get type of address
-    private func getType(_ code: String) {
-        if code.hasPrefix("1") {
+    func getAddressType(_ code: String) -> CodeType? {
+        if code.hasPrefix(CodeType.legacy.prefix) {
             codeType = .legacy
-        } else if code.hasPrefix("3") {
+        } else if code.hasPrefix(CodeType.p2sh.prefix) {
             codeType = .p2sh
-        } else if code.hasPrefix("bc1q") {
+        } else if code.hasPrefix(CodeType.segwit.prefix) {
             codeType = .segwit
-        } else if code.hasPrefix("bc1p") {
+        } else if code.hasPrefix(CodeType.taproot.prefix) {
             codeType = .taproot
         } else {
             codeType = nil
         }
+
         homeUIModel.addressType = codeType?.description
+
+        return codeType
     }
     
     // Function to process scanned code
     func processScannedCode(_ code: String?) {
         if let code = code {
             scannedCode = code
-            validateCode(code)
-            getType(code)
+            _ = validateCode(code)
+            _ = getAddressType(code)
         }
     }
 }

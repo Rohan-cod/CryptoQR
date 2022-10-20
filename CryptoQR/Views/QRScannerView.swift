@@ -27,13 +27,12 @@ struct QRScannerView: View {
                     Text(scannerViewModel.scannedCode!)
 
                     HStack(spacing: 3) {
-                        Text("The address is")
                         Text(scannerViewModel.homeUIModel.validationResultText)
                             .foregroundColor(scannerViewModel.homeUIModel.validationResultColor)
                     }
 
-                    if scannerViewModel.homeUIModel.addressType != nil {
-                        Text(scannerViewModel.homeUIModel.addressTypeDescription!)
+                    if let addressType = scannerViewModel.homeUIModel.addressType {
+                        Text(addressType)
                     }
                 }
                 .font(scannerViewModel.homeUIModel.resultFont)

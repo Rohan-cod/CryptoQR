@@ -40,17 +40,4 @@ final class CryptoQRUITests: XCTestCase {
             }
         }
     }
-    
-    func testTitle() throws {
-        let title = app.staticTexts["QR Code Scanner"]
-     
-        XCTAssert(title.exists)
-    }
-
-    func testScanButton() throws {
-        let scanButton = app.buttons["scanButton"]
-     
-        XCTAssert(scanButton.exists)
-        XCTAssertEqual(scanButton.label, "Scan a QR Code")
-    }
 }

@@ -36,13 +36,6 @@ struct HomeUIModel {
     }
 
     var addressType: String?
-    var addressTypeDescription: String? {
-        if let addressType = addressType {
-            return "The address is a \(addressType) address"
-        } else {
-            return nil
-        }
-    }
 
     let cornerRadius: CGFloat
 }

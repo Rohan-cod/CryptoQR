@@ -9,13 +9,19 @@ import XCTest
 @testable import CryptoQR
 
 final class CryptoQRTests: XCTestCase {
+    
+    var scannerViewModel: ScannerViewModel!
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        try super.setUpWithError()
+        scannerViewModel = ScannerViewModel()
     }
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        scannerViewModel = nil
+        try super.tearDownWithError()
     }
 
     func testExample() throws {
@@ -32,5 +38,34 @@ final class CryptoQRTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
+    
+    func testValidateCode() {
+        let sampleData: [String : Bool] = [
+            "bc1pmzfrwwndsqmk5yh69yjr5lfgfg4": true,
+            "2c1pmzfrwwndsqmk5yh69yjr5lfgfg4": false,
+            "bc1pmzfrwwndsqmk5yh69yjr5lfgfg4treudbfiebcoe": false,
+            "1mzfrwwndsqmk5yh69yjr5lfgfg4": true,
+            "3mzfrwwndsqmk5yh69yjr5lfgfg4": true,
+            "bc1qmzfrwwndsqmk5yh69yjr5lfgfg4": true
+        ]
 
+        for data in sampleData {
+            XCTAssertEqual(data.value, scannerViewModel.validateCode(data.key), "Address Validator is wrong!")
+        }
+    }
+    
+    func testGetAddressType() {
+        let sampleData: [String : CodeType?] = [
+            "bc1pmzfrwwndsqmk5yh69yjr5lfgfg4": .taproot,
+            "2c1pmzfrwwndsqmk5yh69yjr5lfgfg4": nil,
+            "67c1pmzfrwwndsqmk5yh69yjr5lfgfg4": nil,
+            "1mzfrwwndsqmk5yh69yjr5lfgfg4": .legacy,
+            "3mzfrwwndsqmk5yh69yjr5lfgfg4": .p2sh,
+            "bc1qmzfrwwndsqmk5yh69yjr5lfgfg4": .segwit
+        ]
+
+        for data in sampleData {
+            XCTAssertEqual(data.value, scannerViewModel.getAddressType(data.key), "Get Address Type is wrong!")
+        }
+    }
 }
