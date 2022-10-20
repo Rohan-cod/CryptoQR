@@ -5,6 +5,7 @@ An iOS Application to scan and validate BTC wallet addresses using QR Codes.
 
 * Swift
 * SwiftUI
+* XCTest
 * [CodeScanner](https://github.com/twostraws/CodeScanner)
 
 ## Demo
